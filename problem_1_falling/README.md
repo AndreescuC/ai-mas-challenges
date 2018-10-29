@@ -1,35 +1,17 @@
-# The falling objects challenge
+Ok, my agent is still pretty dumb. Unfortunately, I didn't have that much time to invest in it.
 
-Your goal is to try to avoid whatever is coming at you. Can you think of the optimal agent 
-policy? 
+What he does:
+	- scans the whole matrix and identifies blueprints for the object and the player
+	- gets a middle X for both the object and the player, the lower tip of the object, the higher tip of the player (he basically assumes that both the object and the player are squares)
+	- based on these and the falling speed, he calculates if there is still time to avoid collision (RUN)
+	- if not, he returns to the center, as the center is the best position to be in when the next object arrives(LIVE TO FIGHT ANOTHER DAY)
 
-Any overlap of the agent (blue box) with a falling object results in a reward of -1. There is only 
-one obstacle on the map at any given moment and they fall with constant speed. The 
-obstacles can have different shapes, sizes, rotations, speeds. Your agent has to be prepared for 
-any kind of obstacle. 
 
-You have to implement an agent, just like our demo agent from `demo_agent.py`. The agent will be 
-tested using the script `test_agent.py` using different config files. We will evaluate the agent using new configs and obstacle shapes, so try to have a agent that is prepared. There must be a better solution than the random agent.
+How can 'he' improve:
+	- don't go trough the whole observation 'matrix' (right now, he is really slow, around 30s / test because of that); he can do that by:
+		-- skiping a lot of rows by first detecting the whole object, than skip directlly to the bottom, where the player always will sit, according to the algorithm
+		-- kind of "binary search"-ing for the object (but not really), by splitting the screen in half (horizontally), than in quarters etc; the player is still at the bottom
+	- run even though he can't avoid collision; just because he will collide, he can still take less "damage points" by minimizing the overlapping boxes
+	- clean up his act: he has some bugs
 
-Good luck!
-
-## Getting Started
-
-You can play the game by running the `play_game.py` script. Use the keys `["W", "A", "S", "D"]`
-keys to control the agent.
-
-## Submission Format
-Your agent must be implemented in python with a class similar to `DemoAgent`. The policy of the 
-agent will be implemented in the method `act` and will only have access to the variables returned by the `env.step` method: `observation, reward, done_state` (a numpy array containing the game screen image/ a float number representing the reward / a boolean representing end of episode if True). 
-
-**A python file with your agent class that can be run using our example (details below).**
-
-## Running the tests
-
-```
-python test_agent.py -a <module_name>+<class_name>
-```
-Example:
-```
-python test_agent.py -a demo_agent+DemoAgent
-```
+Average score: -110 (8 attempts) MUCH WORSE than the Demo Agent :(
