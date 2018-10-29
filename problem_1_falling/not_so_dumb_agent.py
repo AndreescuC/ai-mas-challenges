@@ -27,12 +27,6 @@ def get_entities_blueprints(observation):
             if classification == CLASSIFICATION_OBJECT:
                 obj_position.append((row_idx, column_idx))
 
-	# print("**************************************************************")
-	# print("************************OBJ********************************")
-	# print(obj_position)
-	# print("**************************************************************")
-	# print("************************PLAYER********************************")
-	# print(player_position)
     return (player_position, obj_position)
 
 
@@ -85,9 +79,6 @@ def is_it_worth_to_run(player_indicators, obj_indicators):
 
 def where_to_run(player_indicators, obj_indicators):
     player_to_obj_rel = 0
-    #print("Indicators")
-    #print(player_indicators[0])
-    #print(obj_indicators[0])
     if player_indicators[0] < obj_indicators[0]:
         player_to_obj_rel = DIRECTION_LEFT
         diff = (obj_indicators[0] - obj_indicators[2]) - (player_indicators[0] + player_indicators[2])
@@ -111,34 +102,18 @@ class NotSoDumbAgend:
         :param observation: numpy array of shape (width, height, 3) *defined in config file
         :return: int between 0 and max_action
         """
-        #print("blueprints")
         player_blueprint, obj_blueprint = get_entities_blueprints(observation)
         if len(obj_blueprint) == 0:
-            #print("No obj ")
-            #print(1)
             return 1
 
-        #print("indicators")
         # just unpacking to save the reader from mental mapping variables
         player_center_X, player_highest_Y, player_width = get_player_indicators(player_blueprint)
         obj_center_X, obj_lowest_Y, obj_width = get_object_indicators(obj_blueprint)
-        # print(player_center_X)
-        # print(player_width)
-        # print(obj_center_X)
-        # print(obj_width)
 
         player_indicators = (player_center_X, player_highest_Y, player_width)
         obj_indicators = (obj_center_X, obj_lowest_Y, obj_width)
 
-        #print("worth running")
         if is_it_worth_to_run(player_indicators, obj_indicators):
-            result = where_to_run(player_indicators, obj_indicators)
-            #print("Running ")
-            #print(result)
-            return result
+            return where_to_run(player_indicators, obj_indicators)
 
-        #print("another day")
-        result = live_to_fight_another_day(player_center_X, len(observation[0].tolist()))
-        #print("To the center ")
-        #print(result)
-        return result
+        return live_to_fight_another_day(player_center_X, len(observation[0].tolist()))
